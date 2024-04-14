@@ -25,12 +25,35 @@ app.get("/api/hello", function (req, res) {
 });
 
 
-app.get("/api/:date", function (req, res) {
-  let date = new Date(req.params["date"])
+app.get("/api", function (req, res) {  
+  let date = new Date()
+
   res.json({
     unix: date.valueOf(),
     utc: date.toUTCString()
   })
+});
+
+
+app.get("/api/:date", function (req, res) {
+  let date_param = req.params["date"]
+  
+  let is_millis = /^-?\d+$/.test(date_param)
+  if (is_millis) {
+    date = new Date(parseInt(req.params["date"]))
+  } else {
+    date = new Date(req.params["date"])
+  }
+
+  resp_body = { error: "Invalid Date" } 
+  if (date.valueOf()) {
+    resp_body = {
+      unix: date.valueOf(),
+      utc: date.toUTCString()
+    }
+  }
+
+  res.json(resp_body)
 }); 
 
 
